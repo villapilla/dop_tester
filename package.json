@@ -1,10 +1,10 @@
 {
-  "name": "meanjs",
-  "description": "Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js.",
+  "name": "dop-tester",
+  "description": "Aplicacion para lanzar pruebas unitarias en Javascript",
   "version": "0.4.2",
   "meanjs-version": "0.4.2",
   "private": false,
-  "author": "https://github.com/meanjs/mean/graphs/contributors",
+  "author": "David Villaluenga Casasola",
   "license": "MIT",
   "repository": {
     "type": "git",
