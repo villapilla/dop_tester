@@ -46,7 +46,6 @@ var UserSchema = new Schema({
   },*/
   email: {
     type: String,
-    unique: true,
     lowercase: true,
     trim: true,
     default: '',
@@ -75,6 +74,33 @@ var UserSchema = new Schema({
     required: 'Provider is required'
   },
   providerData: {},
+  repositories : {
+    name: {
+      type: String,
+      trim: true
+    },
+    active : {
+      type: Boolean,
+      default: false
+    },
+    tests: {
+      numberTests: {
+        type: Number,
+        default: 0
+      },
+      testsPass : {
+        type: Number,
+        default: 0
+      },
+      exit_input : {
+        type: String
+      },
+      timestamp : {
+        type: Date
+      }
+    }
+  },
+  
   additionalProvidersData: {},
   roles: {
     type: [{
