@@ -1,4 +1,26 @@
-<section ng-controller="HomeController">
+<section ng-controller="HomeController" id="index-content">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+      <p class="text">
+          para comenzar
+      </p>
+  </div>
+  <div class="col-md-12 col-sm-12 col-xs-12" ng-controller="AuthenticationController">
+      <button class="btn btn-git" ng-click="callOauthProvider('/api/auth/github')">
+          <img ng-src="/modules/users/client/img/buttons/git_blanco.png">
+           <div class="hidden-sm hidden-xs">
+           <span>Registrate</span>
+           <span>con GitHub</span>
+          </div>
+    </button>
+  </div>
+  <div class="col-md-12 col-sm-12 col-xs-12">
+      <p class="text">
+          automatiza el testing de tus aplicaciones y no te preocupes más de lanzar tus pruebas
+      </p>
+  </div>
+</section>
+  
+<!--  
   <div class="jumbotron text-center">
     <div class="row">
       <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12">
@@ -68,6 +90,7 @@
         </li>
         <!-- <li><a target="_blank" href="http://meanjs.org/generator.html">Yeoman Generator</a>
 				</li> -->
+				<!--
         <li><a target="_blank" href="http://meanjs.org/modules.html">Modules</a>
         </li>
         <li><a target="_blank" href="http://meanjs.org/changelog.html">Changelog</a>
@@ -82,3 +105,4 @@
   <br>Enjoy &amp; Keep Us Updated,
   <br>The MEAN.JS Team.
 </section>
+-->

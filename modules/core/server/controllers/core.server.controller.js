@@ -4,8 +4,20 @@
  * Render the main application page
  */
 exports.renderIndex = function (req, res) {
-  res.render('modules/core/server/views/index', {
-    user: req.user || null
+  if(req.user) {
+    res.render('modules/core/server/views/user/home', {
+      user: req.user
+    });
+  } else {
+    res.render('modules/core/server/views/index', {
+      user: null
+    });
+  }
+};
+
+exports.renderHome = function (req, res) {
+  res.render('modules/core/server/views/user/home', {
+    user: req.user
   });
 };
 

@@ -36,6 +36,7 @@ module.exports = function (config) {
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       profileImageURL: (providerData.avatar_url) ? providerData.avatar_url : undefined,
       // jscs:enable
+      //repositories: profile.repositories,
       provider: 'github',
       providerIdentifierField: 'id',
       providerData: providerData

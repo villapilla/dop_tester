@@ -7,7 +7,9 @@ var path = require('path'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   mongoose = require('mongoose'),
   passport = require('passport'),
-  User = mongoose.model('User');
+  User = mongoose.model('User'),
+  Repository = mongoose.model('Repository'),
+  XMLHttpRequest1 = require("xmlhttprequest").XMLHttpRequest;
 
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
@@ -119,11 +121,47 @@ exports.oauthCallback = function (strategy) {
           return res.redirect('/');
         }
 
-        return res.redirect(redirectURL || sessionRedirectURL || '/');
+        return res.redirect(redirectURL || sessionRedirectURL || '/home');
       });
     })(req, res, next);
   };
 };
+
+function getRepositoriesData(url) {
+  var requestRepositories = new XMLHttpRequest1(),
+    urlRepositories,
+    timeoutRepositories,
+    repositoriesJson,
+    repositories = [];
+    urlRepositories = url;
+    requestRepositories.open('GET', urlRepositories);
+    timeoutRepositories = setTimeout(function () {
+      requestRepositories.abort();
+    }, 10000);
+    requestRepositories.onreadystatechange = function () {
+      if(requestRepositories.readyState === 4 && requestRepositories.status === 200) {
+        clearTimeout(timeoutRepositories);
+       
+        repositoriesJson = JSON.parse(requestRepositories.responseText);
+        //console.log(repositoriesJson);
+        Array.prototype.forEach.call(repositoriesJson, function (element, index){
+          console.log(element.name);
+          repositories.push(new Repository({
+            name : element.name,
+            url : element.git_url
+          }).save());
+        });
+        /*repositories.forEach(function(ek) {
+          ek.save();
+          console.log(ek);
+        });*/
+      }
+      return repositories;
+    };
+    requestRepositories.send(null);
+}
+
+
 
 /**
  * Helper function to save or update a OAuth user profile
@@ -156,6 +194,7 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
           var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
           User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
+            
             user = new User({
               /*firstName: providerUserProfile.firstName,
               lastName: providerUserProfile.lastName,
@@ -165,7 +204,8 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
               email: providerUserProfile.email,
               profileImageURL: providerUserProfile.profileImageURL,
               provider: providerUserProfile.provider,
-              providerData: providerUserProfile.providerData
+              providerData: providerUserProfile.providerData,
+              repositories : getRepositoriesData("https://api.github.com/users/" + providerUserProfile.username +"/repos")
             });
 
             // And save the user

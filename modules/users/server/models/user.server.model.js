@@ -28,22 +28,6 @@ var validateLocalStrategyEmail = function (email) {
  * User Schema
  */
 var UserSchema = new Schema({
-  /*firstName: {
-    type: String,
-    trim: true,
-    default: '',
-    validate: [validateLocalStrategyProperty, 'Please fill in your first name']
-  },
-  lastName: {
-    type: String,
-    trim: true,
-    default: '',
-    validate: [validateLocalStrategyProperty, 'Please fill in your last name']
-  },
-  displayName: {
-    type: String,
-    trim: true
-  },*/
   email: {
     type: String,
     lowercase: true,
@@ -58,10 +42,11 @@ var UserSchema = new Schema({
     lowercase: true,
     trim: true
   },
-  /*password: {
-    type: String,
-    default: ''
-  },*/
+  repositories : {
+    type: [{
+      type: Object
+    }]
+  },
   salt: {
     type: String
   },
@@ -74,33 +59,6 @@ var UserSchema = new Schema({
     required: 'Provider is required'
   },
   providerData: {},
-  repositories : {
-    name: {
-      type: String,
-      trim: true
-    },
-    active : {
-      type: Boolean,
-      default: false
-    },
-    tests: {
-      numberTests: {
-        type: Number,
-        default: 0
-      },
-      testsPass : {
-        type: Number,
-        default: 0
-      },
-      exit_input : {
-        type: String
-      },
-      timestamp : {
-        type: Date
-      }
-    }
-  },
-  
   additionalProvidersData: {},
   roles: {
     type: [{

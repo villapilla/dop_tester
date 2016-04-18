@@ -1,3 +1,6 @@
+/*
+global $
+*/
 $(document).ready(function() {   
     var sideslider = $('[data-toggle=collapse-side]'),
         sel = sideslider.attr('data-target'),
@@ -7,9 +10,9 @@ $(document).ready(function() {
         $(sel2).toggleClass('out');
     });
     $("#log_git button").hover(function() {
-        $("#log_git img").attr("src","img/gitHub_black.png");
+        $("#log_git img").attr("src","/modules/users/client/img/buttons/git_negro.png");
     }, function () {
-        $("#log_git img").attr("src","img/gitHub_white.png");
+        $("#log_git img").attr("src","/modules/users/client/img/buttons/git_blanco.png");
     });
 
 });

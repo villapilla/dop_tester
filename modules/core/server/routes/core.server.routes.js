@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = function (app) {
+  var users = require('../../../users/server/controllers/users.server.controller');
   // Root routing
   var core = require('../controllers/core.server.controller');
 
@@ -11,5 +12,7 @@ module.exports = function (app) {
   app.route('/:url(api|modules|lib)/*').get(core.renderNotFound);
 
   // Define application route
-  app.route('/*').get(core.renderIndex);
+  app.route('/').get(core.renderIndex);
+  
+  app.route('/home').get(users.userByID, core.renderHome);
 };
