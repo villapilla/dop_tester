@@ -9,7 +9,7 @@ var path = require('path'),
   passport = require('passport'),
   User = mongoose.model('User'),
   Repository = mongoose.model('Repository'),
-  XMLHttpRequest1 = require("xmlhttprequest").XMLHttpRequest;
+  request = require('sync-request');
 
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
@@ -127,38 +127,33 @@ exports.oauthCallback = function (strategy) {
   };
 };
 
-function getRepositoriesData(url) {
-  var requestRepositories = new XMLHttpRequest1(),
-    urlRepositories,
-    timeoutRepositories,
+function getRepositoriesData(providerUserProfile) {
+  var repo = [],
     repositoriesJson,
-    repositories = [];
-    urlRepositories = url;
-    requestRepositories.open('GET', urlRepositories);
-    timeoutRepositories = setTimeout(function () {
-      requestRepositories.abort();
-    }, 10000);
-    requestRepositories.onreadystatechange = function () {
-      if(requestRepositories.readyState === 4 && requestRepositories.status === 200) {
-        clearTimeout(timeoutRepositories);
-       
-        repositoriesJson = JSON.parse(requestRepositories.responseText);
-        //console.log(repositoriesJson);
-        Array.prototype.forEach.call(repositoriesJson, function (element, index){
-          console.log(element.name);
-          repositories.push(new Repository({
-            name : element.name,
-            url : element.git_url
-          }).save());
-        });
-        /*repositories.forEach(function(ek) {
-          ek.save();
-          console.log(ek);
-        });*/
+    resUpdates,
+    resUpdateJson,
+    resRepos = request('GET', "https://api.github.com/users/" + providerUserProfile.username +"/repos", {
+      'headers': {
+        'user-agent': 'example-user-agent'
       }
-      return repositories;
-    };
-    requestRepositories.send(null);
+    });
+  repositoriesJson = JSON.parse(resRepos.getBody('utf8'));
+  Array.prototype.forEach.call(repositoriesJson, function (element, index){
+    resUpdates = request('GET', "https://api.github.com/repos/" + providerUserProfile.username + "/" + element.name + "/commits", {
+    'headers': {
+      'user-agent': 'example-user-agent'
+    }
+  });
+  resUpdateJson = JSON.parse(resUpdates.getBody('utf8'));
+    
+    repo.push(new Repository({
+      name : element.name,
+      url : element.git_url,
+      lastUpdate : resUpdateJson[0].commit.committer.date,
+      lastCommit : resUpdateJson[0].sha
+    }));
+  });
+  return repo;
 }
 
 
@@ -191,10 +186,10 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
         return done(err);
       } else {
         if (!user) {
-          var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
-
+        var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : ''),
+            repo = getRepositoriesData(providerUserProfile);
           User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
-            
+           
             user = new User({
               /*firstName: providerUserProfile.firstName,
               lastName: providerUserProfile.lastName,
@@ -205,9 +200,9 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
               profileImageURL: providerUserProfile.profileImageURL,
               provider: providerUserProfile.provider,
               providerData: providerUserProfile.providerData,
-              repositories : getRepositoriesData("https://api.github.com/users/" + providerUserProfile.username +"/repos")
+              repositories : repo
             });
-
+  
             // And save the user
             user.save(function (err) {
               return done(err, user);

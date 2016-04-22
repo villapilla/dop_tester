@@ -25,10 +25,10 @@ var RepositorySchema = new Schema({
       type: Array,
       default: []
     },
-    lastUpdata : {
+    lastUpdate : {
       type: Date
     },
-    lastCommit :{
+    lastCommit : {
       type: String
     }
 });

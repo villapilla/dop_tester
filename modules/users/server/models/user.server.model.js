@@ -8,7 +8,8 @@ var mongoose = require('mongoose'),
   crypto = require('crypto'),
   validator = require('validator'),
   generatePassword = require('generate-password'),
-  owasp = require('owasp-password-strength-test');
+  owasp = require('owasp-password-strength-test'),
+  repository = mongoose.model("Repository");
 
 /**
  * A Validation function for local strategy properties
@@ -42,11 +43,41 @@ var UserSchema = new Schema({
     lowercase: true,
     trim: true
   },
-  repositories : {
-    type: [{
-      type: Object
-    }]
-  },
+  repositories : [{
+    name: {
+      type: String,
+      trim: true,
+    },
+    url : {
+      type: String,
+    },
+    active : {
+      type: Boolean,
+      default: false
+    },
+    test : [{
+      numberTests: {
+        type: Number,
+        default: 0
+      },
+      testsPass : {
+        type: Number,
+        default: 0
+      },
+      exit_input : {
+        type: String
+      },
+      timestamp : {
+        type: Date
+      }
+    }],
+    lastUpdate : {
+      type: Date
+    },
+    lastCommit : {
+      type: String
+    }
+  }],
   salt: {
     type: String
   },
@@ -88,11 +119,11 @@ var UserSchema = new Schema({
  * Hook a pre save method to hash the password
  */
 UserSchema.pre('save', function (next) {
-  if (this.password && this.isModified('password')) {
+ /* if (this.password && this.isModified('password')) {
     this.salt = crypto.randomBytes(16).toString('base64');
     this.password = this.hashPassword(this.password);
   }
-
+*/
   next();
 });
 
